@@ -374,7 +374,7 @@ new_cust_per_week Date                    week
 
 select 
 count(a.customer_unique_id) as new_cust_per_week,
-DATEADD(wk, DATEDIFF(wk, 0, created), 0) as Date,
+DATEADD(wk, DATEDIFF(wk, 0, created), 0) as FirstDayOfWeek,
 case when DATEPART(wk,created) = 53 then 1 else DATEPART(wk,created) end as week
 from
 (Select distinct customer_unique_id, min(order_purchase_timestamp) as created 
