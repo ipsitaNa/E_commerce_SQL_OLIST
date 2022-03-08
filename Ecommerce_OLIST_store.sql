@@ -81,13 +81,14 @@ GROUP BY ROLLUP (day_of_week,order_id)
 order by 3 desc;
 
 
---finding grand toatal and subtotal of SALES per year,month,weekday/weekend and order_ids
+--finding grand toatal and subtotal of SALES and ORDER COUNT per year,month,weekday/weekend and order_ids
+
 SELECT
   coalesce(cast(year as varchar),'GrandTotal') as year,
   coalesce(cast(month as varchar),'GrandTotal') as month,
   coalesce(day_of_week,'GrandTotal') as day_of_week,
-  coalesce(order_id,'GrandTotal') as order_id, 
-  round(SUM(price),2) as sales
+  round(SUM(price),2) as sales,
+  sum(count(distinct order_id))over(PARTITION by year,MONTH,day_of_week) as no_of_orders
 FROM (
   SELECT 
     order_id,
@@ -98,8 +99,8 @@ FROM (
   FROM View_order_merge
   where order_status = 'delivered'
 ) AS sales
-GROUP BY  rollup  (year,[month],day_of_week,order_id)
-order by sales desc;
+GROUP BY  rollup  (year,[month],day_of_week)
+order by year, sales desc, no_of_orders desc;
 
 -- showing count of orders per_orderid as well as weekday or weekend
 SELECT 
