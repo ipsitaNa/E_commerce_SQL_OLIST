@@ -193,13 +193,13 @@ select
 round((cast (a.no_of_first_orders as float)/cast(a.Total_cust as float)*100),2) as Conversion_rate
 from(
 select 
-count(distinct M.customer_unique_id) as Total_cust,
-count(distinct fl.first_order_id) as no_of_first_orders
+count(distinct C.customer_unique_id) as Total_cust,
+count(distinct fl.first_or_id) as no_of_first_orders
  from 
-View_MASTER_merge M 
+customers C 
 left join 
 View_first_last_purchase fl 
-on M.customer_unique_id = fl.customer_unique_id) a
+on C.customer_unique_id = fl.customer_unique_id) a
 
 Total_cust  no_of_first_orders  Conversion_rate
 96096       93358               97.15
@@ -213,17 +213,18 @@ select
 round((cast (a.no_of_first_orders as float)/cast(a.Total_cust as float)*100),2) as Convr_rt_per_prodCateg
 from(
 select 
-M.product_category_name,
-count(distinct M.customer_unique_id) as Total_cust,
-count(distinct fl.first_order_id) as no_of_first_orders
- from 
-View_MASTER_merge M 
-left join 
-View_first_last_purchase fl 
-on M.customer_unique_id = fl.customer_unique_id
-where M.product_category_name is not NULL 
-group by M.product_category_name) a
-order by Convr_rt_per_prodCateg desc
+p.product_category_name,
+count(distinct c.customer_unique_id) as Total_cust,
+count(distinct fl.first_or_id) as no_of_first_orders
+from 
+customers C 
+ left join 
+ View_order_merge o on c.customer_id = o.customer_id
+ left join products p on o.product_id = p.product_id
+ left join View_first_last_purchase fl on o.order_id = fl.first_or_id
+where p.product_category_name is not NULL 
+group by p.product_category_name) a
+order by Convr_rt_per_prodCateg desc 
 
 --TOPIC  Calculating Percentage (%) of Total Sum in SQL
 -- THIS IS THE CONTRIBUTION PER PROD CATEGORY PER TOTAL SALES
