@@ -332,6 +332,9 @@ select *,
 dense_rank()over(PARTITION by p.YEAR,p.month order by p.prod_price desc ) as rnk
 from ProdPrice_monthly p 
 )
+select 
+Distinct * from rankprod r;
+
 -- aggreagting "all other products" 
 select distinct  year,
 [month],
