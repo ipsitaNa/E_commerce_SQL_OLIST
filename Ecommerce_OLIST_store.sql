@@ -35,11 +35,10 @@ select
     datepart(day,order_delivered_carrier_date) as day,
     --datepart('day',order_delivered_carrier_date) as , 
     count(distinct c.customer_id) as no_of_cust,
-    sum(count(distinct c.customer_id))over(partition by 
-    datepart(year,order_delivered_carrier_date) ,
-    datepart(month,order_delivered_carrier_date)
+    sum(count(distinct c.customer_id))over(
     order by datepart(year,order_delivered_carrier_date) ,
-    datepart(month,order_delivered_carrier_date) ) as monthly_running_total
+    datepart(month,order_delivered_carrier_date)
+     ) as monthly_running_total
 from View_order_merge o 
 join customers c on o.customer_id = c.customer_id
 where order_delivered_carrier_date is not null
